@@ -28,7 +28,7 @@ public enum Role {
                   MANAGER_CREATE
           )
   ),
-  MANAGER(
+  EXPERT(
           Set.of(
                   MANAGER_READ,
                   MANAGER_UPDATE,

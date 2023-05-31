@@ -17,7 +17,6 @@ import com.pfa.annotationmanager.user.Permission.*;
 
 import static com.pfa.annotationmanager.user.Permission.*;
 import static com.pfa.annotationmanager.user.Role.ADMIN;
-import static com.pfa.annotationmanager.user.Role.MANAGER;
 import static org.springframework.http.HttpMethod.*;
 
 @Configuration
@@ -51,8 +50,6 @@ public class SecurityConfiguration {
         )
           .permitAll()
 
-
-        .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
 
 
         .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
