@@ -1,29 +1,20 @@
 package com.pfa.annotationmanager.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@Entity
-@Table(name = "annotation_candidate")
-public class AnnotationCandidate {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+import java.io.Serializable;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "expert_candidate_id")
-    private ExpertCandidate expertCandidate;
+@Data
+@AllArgsConstructor
 
-    // Constructors, getters, and setters
+public class AnnotationCandidate implements Serializable {
 
-    public Long getId() {
-        return id;
-    }
+    private Integer from;
+    private  Integer to;
+    @ManyToOne
+    private ScientifcClass scientifcClass;
 
-    public ExpertCandidate getExpertCandidate() {
-        return expertCandidate;
-    }
 
-    public void setExpertCandidate(ExpertCandidate expertCandidate) {
-        this.expertCandidate = expertCandidate;
-    }
 }

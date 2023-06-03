@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "experts")
 public class Expert extends User {
+
     private int rating;
     // Additional attributes specific to the expert role
 

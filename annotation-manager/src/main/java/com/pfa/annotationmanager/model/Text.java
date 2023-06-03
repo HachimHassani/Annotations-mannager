@@ -1,9 +1,9 @@
 package com.pfa.annotationmanager.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -15,8 +15,15 @@ public class Text {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String content;
 
+    private String content;
+    @Setter @Getter
+    private TextState state;
+
+    @OneToMany
+    private List<ExpertCandidate> candidates;
+    @Transient @Setter @Getter
+    private boolean Candidated;
     public Text(String sampleText) {
         this.content = sampleText;
     }

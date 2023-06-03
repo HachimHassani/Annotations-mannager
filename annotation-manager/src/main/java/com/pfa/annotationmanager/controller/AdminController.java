@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
     private final TextRepository textRepository;
     private final ExpertRepository expertRepository;
+    @Autowired
+    private  PasswordEncoder passwordEncoder;
 
     @Autowired
     public AdminController(TextRepository textRepository, ExpertRepository expertRepository) {
@@ -28,6 +31,7 @@ public class AdminController {
     // Endpoint to add a new expert
     @PostMapping("/experts")
     public ResponseEntity<Expert> addExpert(@RequestBody Expert expert) {
+        expert.setPassword(passwordEncoder.encode(expert.getPassword()));
         Expert savedExpert = expertRepository.save(expert);
         return new ResponseEntity<>(savedExpert, HttpStatus.CREATED);
     }

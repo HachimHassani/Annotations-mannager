@@ -1,6 +1,8 @@
 package com.pfa.annotationmanager.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -9,12 +11,13 @@ public class ExpertCandidate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @OneToMany(mappedBy = "expertCandidate", cascade = CascadeType.ALL)
+    @ElementCollection @Setter @Getter
     private List<AnnotationCandidate> annotationCandidates;
     @ManyToOne
     private Text text;
 
+    @Setter @Getter
+    private TextState annotationstate;
     @ManyToOne
     private Expert expert;
 
@@ -38,11 +41,4 @@ public class ExpertCandidate {
         this.expert = expert;
     }
 
-    public List<AnnotationCandidate> getAnnotationCandidates() {
-        return annotationCandidates;
-    }
-
-    public void setAnnotationCandidates(List<AnnotationCandidate> annotationCandidates) {
-        this.annotationCandidates = annotationCandidates;
-    }
 }
