@@ -23,9 +23,11 @@ public class User implements UserDetails {
 
   @Id
   @GeneratedValue
-  private Integer id;
+  private Long id;
   private String firstname;
   private String lastname;
+
+  @Column(unique = true)
   private String email;
   private String password;
 
@@ -34,6 +36,15 @@ public class User implements UserDetails {
 
   @OneToMany(mappedBy = "user")
   private List<Token> tokens;
+
+  public User(String firstname, String lastname, String email, String password, Role role) {
+    this.firstname = firstname;
+    this.lastname = lastname;
+    this.email = email;
+    this.password = password;
+    this.role = role;
+  }
+
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
