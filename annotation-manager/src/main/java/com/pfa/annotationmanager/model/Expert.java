@@ -5,15 +5,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 
 
 @Entity
 @Table(name = "experts")
-public class Expert extends User {
+public class Expert extends User implements UserDetails {
 
     private int rating;
     // Additional attributes specific to the expert role
-
     // Constructors, getters, and setters
     public Expert() {
     }
