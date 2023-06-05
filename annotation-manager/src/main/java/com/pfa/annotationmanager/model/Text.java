@@ -20,7 +20,9 @@ public class Text {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
+    @Column(columnDefinition = "TEXT")
+    @Setter @Getter
+    private String Title;
     @Column(columnDefinition = "TEXT")
     private String content;
     @Setter @Getter
@@ -34,6 +36,7 @@ public class Text {
     @Transient @Setter @Getter
     private boolean Candidated;
     public Text(String sampleText) {
+        this.Title = " ";
         this.content = sampleText;
         this.state = TextState.INIT;
     }
