@@ -52,11 +52,6 @@ public class SecurityConfiguration {
 
 
 
-        .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
-        .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name())
-        .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name())
-        .requestMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name(), MANAGER_DELETE.name())
-
 
        /* .requestMatchers("/api/v1/admin/**").hasRole(ADMIN.name())
 
@@ -74,10 +69,10 @@ public class SecurityConfiguration {
         .and()
         .authenticationProvider(authenticationProvider)
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-        .logout()
-        .logoutUrl("/api/v1/auth/logout")
-        .addLogoutHandler(logoutHandler)
-        .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+//        .logout()
+//        .logoutUrl("/api/v1/auth/logout")
+//        .addLogoutHandler(logoutHandler)
+//        .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
     ;
 
     return http.build();

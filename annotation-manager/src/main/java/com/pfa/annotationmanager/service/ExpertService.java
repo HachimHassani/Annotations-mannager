@@ -7,14 +7,11 @@ import com.pfa.annotationmanager.repository.TextRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ExpertService {
-
+    public static List<AnnotationCandidate> annotationCandidates;
     private final ExpertRepository expertRepository;
 
     @Autowired
@@ -32,7 +29,7 @@ public class ExpertService {
         //get text and create a new candidate
         Text text = textRepository.findById(id).orElse(null);
         if (text==null){return false;}
-        if (expertCandidateRepository.findByExpertAndText(expert.getId(),id).isPresent()){return false;}
+        if (expertCandidateRepository.findByExpertAndTextId(expert,id).isPresent()){return false;}
         ExpertCandidate candidate = new ExpertCandidate();
         candidate.setText(text);
         candidate.setExpert(expert);
@@ -40,6 +37,15 @@ public class ExpertService {
         expertCandidateRepository.save(candidate);
         return  true;
 
+    }
+    public static <T> Map<T, Integer> calculateFrequency(List<T> elements) {
+        Map<T, Integer> frequencyMap = new HashMap<>();
+
+        for (T element : elements) {
+            frequencyMap.put(element, frequencyMap.getOrDefault(element, 0) + 1);
+        }
+
+        return frequencyMap;
     }
     public List<ExpertCandidate> getAllCandidates(Expert expert){
         return expertCandidateRepository.findAllByExpert(expert).orElse(null);
@@ -50,31 +56,64 @@ public class ExpertService {
         return res;
     }
 
-//    public void review(Long id) {
-//        Text text = textRepository.findById(id).orElse(null);
-//        if (text != null) {
-//            List<ExpertCandidate> all = text.getCandidates();
-//            List<AnnotationCandidate> global = new ArrayList<>();
-//            for (ExpertCandidate expertCandidate : all) {
-//
-//
-//                for (AnnotationCandidate annotationCandidate : expertCandidate.getAnnotationCandidates()) {
-//                    // Check specific conditions to determine if the annotation is missing
-//                    if (global.stream().noneMatch(element -> Objects.equals(element.getFrom(), annotationCandidate.getFrom()) && Objects.equals(element.getTo(), annotationCandidate.getTo()))) {
-//                        global.add(annotationCandidate);
-//                    }
-//                }
-//
-//                // Perform actions with missing annotations
-//                // For example, you can print the missing annotations
-//                System.out.println("Missing annotations for ExpertCandidate: " + expertCandidate.getId());
-//                for (AnnotationCandidate missingAnnotation : missingAnnotations) {
-//                    System.out.println(missingAnnotation.getId());
-//                }
-//            }
-//        }
-//    }
-    public void createAnnotations(Expert expert,Long id, List<AnnotationCandidate> annotations){
+    public void review(Long id) {
+        Text text = textRepository.findById(id).orElse(null);
+        if (text != null) {
+            List<ExpertCandidate> all = text.getCandidates();
+            List<AnnotationCandidate> global = new ArrayList<>();
+            for (ExpertCandidate expertCandidate : all) {
+
+
+                for (AnnotationCandidate annotationCandidate : expertCandidate.getAnnotationCandidates()) {
+                    // Check specific conditions to determine if the annotation is missing
+                    if (global.stream().noneMatch(element -> Objects.equals(element.getFrom(), annotationCandidate.getFrom()) && Objects.equals(element.getTo(), annotationCandidate.getTo()))) {
+                        global.add(annotationCandidate);
+                    }
+                }
+
+
+            }
+            annotationCandidates = global;
+        }
+    }
+
+    public  List<AnnotationCandidate> getMissingCandidates(Long id) {
+        ExpertCandidate cand = expertCandidateRepository.findById(id).orElse(null);
+        List<AnnotationCandidate> candidates = new ArrayList<>(List.copyOf(annotationCandidates));
+
+        if (cand != null) {
+            List<AnnotationCandidate> existing = cand.getAnnotationCandidates();
+            candidates.removeIf(ann -> existing.stream().noneMatch(element -> Objects.equals(element.getFrom(), ann.getFrom()) && Objects.equals(element.getTo(), ann.getTo())));
+        }
+        return candidates;
+    }
+
+    public List<Annotation> crossValidation(Long textId){
+        Text text = textRepository.findById(textId).orElse(null);
+        List<Integer> froms = new ArrayList<>();
+        List<Integer> tos = new ArrayList<>();
+        List<Long> classes = new ArrayList<>();
+        assert text != null;
+        List<ExpertCandidate> candidates = text.getCandidates();
+        int count =  candidates.size();
+
+            List<AnnotationCandidate> global = new ArrayList<>();
+            for (ExpertCandidate expertCandidate : candidates) {
+
+                for (AnnotationCandidate annotationCandidate : expertCandidate.getAnnotationCandidates()) {
+                    // Check specific conditions to determine if the annotation is missing
+                    if (froms.stream().anyMatch(element -> element <= annotationCandidate.getFrom())) {
+                        global.add(annotationCandidate);
+                    }
+                }
+
+
+            }
+            return  null;
+
+    }
+
+    public void createAnnotations(Expert expert, Long id, List<AnnotationCandidate> annotations){
         //asssumes that the id is for the expertcandidate
         ExpertCandidate cand=expertCandidateRepository.findById(id).orElse(null);
         //checks the state

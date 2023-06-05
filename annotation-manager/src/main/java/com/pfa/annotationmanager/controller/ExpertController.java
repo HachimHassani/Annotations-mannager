@@ -5,8 +5,11 @@ import com.pfa.annotationmanager.repository.ExpertCandidateRepository;
 import com.pfa.annotationmanager.repository.ExpertRepository;
 import com.pfa.annotationmanager.repository.TextRepository;
 import com.pfa.annotationmanager.service.ExpertService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,20 +19,17 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/expert")
 public class ExpertController {
-    private final ExpertRepository expertRepository;
+    @Autowired
+    private  ExpertRepository expertRepository;
 
-
-    private final ExpertCandidateRepository expertCandidateRepository;
+    @Autowired
+    private  ExpertCandidateRepository expertCandidateRepository;
 
     @Autowired
     private TextRepository textRepository;
 
     @Autowired
     private ExpertService expertService;
-    public ExpertController(ExpertRepository expertRepository,ExpertCandidateRepository expertCandidateRepository) {
-        this.expertRepository = expertRepository;
-        this.expertCandidateRepository = expertCandidateRepository;
-    }
 
     @GetMapping("/texts")
     public List<Text> getalltexts(Authentication authentication){
@@ -54,8 +54,6 @@ public class ExpertController {
     public List<ExpertCandidate> getAllCandidates(Authentication authentication) {
         String username = authentication.getName();
         Expert expert =  expertRepository.findByEmail(username).orElse(null);
-
-        // Process the list of ExpertCandidates as needed
         return expertService.getAllCandidates(expert);
     }
 
