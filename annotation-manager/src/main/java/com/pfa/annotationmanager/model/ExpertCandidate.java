@@ -1,5 +1,6 @@
 package com.pfa.annotationmanager.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,7 @@ public class ExpertCandidate {
 
     @Setter @Getter
     private TextState annotationstate;
+    @JsonIgnore
     @ManyToOne
     private Expert expert;
 

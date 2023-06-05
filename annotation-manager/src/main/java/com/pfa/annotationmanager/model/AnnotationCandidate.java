@@ -1,20 +1,34 @@
 package com.pfa.annotationmanager.model;
 
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
-
-public class AnnotationCandidate implements Serializable {
+@Entity
+public class AnnotationCandidate  {
 
     private Integer from;
     private  Integer to;
+
     @ManyToOne
     private ScientifcClass scientifcClass;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    public AnnotationCandidate() {
+
+    }
 
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
 }

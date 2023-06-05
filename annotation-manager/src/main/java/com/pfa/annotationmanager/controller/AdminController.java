@@ -2,8 +2,10 @@ package com.pfa.annotationmanager.controller;
 
 import com.pfa.annotationmanager.model.Expert;
 import com.pfa.annotationmanager.model.Text;
+import com.pfa.annotationmanager.model.TextState;
 import com.pfa.annotationmanager.repository.ExpertRepository;
 import com.pfa.annotationmanager.repository.TextRepository;
+import com.pfa.annotationmanager.user.Role;
 import com.platform.parkingsystem.api.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -12,10 +14,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/admin")
-@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
     private final TextRepository textRepository;
     private final ExpertRepository expertRepository;
@@ -32,6 +36,8 @@ public class AdminController {
     @PostMapping("/experts")
     public ResponseEntity<Expert> addExpert(@RequestBody Expert expert) {
         expert.setPassword(passwordEncoder.encode(expert.getPassword()));
+        expert.setRole(Role.EXPERT);
+        expert.setRating(3);
         Expert savedExpert = expertRepository.save(expert);
         return new ResponseEntity<>(savedExpert, HttpStatus.CREATED);
     }
@@ -46,7 +52,14 @@ public class AdminController {
     // Endpoint to add a new text
     @PostMapping("/texts")
     public ResponseEntity<Text> addText(@RequestBody Text text) {
+        text.setState(TextState.INIT);
         Text savedText = textRepository.save(text);
+        return new ResponseEntity<>(savedText, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/texts")
+    public ResponseEntity<List<Text>> getText(@RequestBody Text text) {
+        List<Text> savedText = textRepository.findAll();
         return new ResponseEntity<>(savedText, HttpStatus.CREATED);
     }
 

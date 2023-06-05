@@ -22,18 +22,18 @@ public enum Role {
                   ADMIN_UPDATE,
                   ADMIN_DELETE,
                   ADMIN_CREATE,
-                  MANAGER_READ,
-                  MANAGER_UPDATE,
-                  MANAGER_DELETE,
-                  MANAGER_CREATE
+                  EXPERT_READ,
+                  EXPERT_UPDATE,
+                  EXPERT_DELETE,
+                  EXPERT_CREATE
           )
   ),
   EXPERT(
           Set.of(
-                  MANAGER_READ,
-                  MANAGER_UPDATE,
-                  MANAGER_DELETE,
-                  MANAGER_CREATE
+                  EXPERT_READ,
+                  EXPERT_UPDATE,
+                  EXPERT_DELETE,
+                  EXPERT_CREATE
           )
   )
 

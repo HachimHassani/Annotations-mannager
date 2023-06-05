@@ -7,6 +7,7 @@ import com.pfa.annotationmanager.token.TokenType;
 import com.pfa.annotationmanager.model.User;
 import com.pfa.annotationmanager.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pfa.annotationmanager.user.Role;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class AuthenticationService {
         .lastname(request.getLastname())
         .email(request.getEmail())
         .password(passwordEncoder.encode(request.getPassword()))
-        .role(request.getRole())
+        .role(Role.EXPERT)
         .build();
     var savedUser = repository.save(user);
     var jwtToken = jwtService.generateToken(user);

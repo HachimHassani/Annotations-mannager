@@ -13,5 +13,6 @@ public interface ExpertCandidateRepository extends JpaRepository<ExpertCandidate
 
     Optional<List<ExpertCandidate>> findAllByExpert(Expert expert);
 
-    Optional<ExpertCandidate> findByExpertAndText(Long id,Long TextId);
+
+    Optional<ExpertCandidate> findByExpertAndTextId(Expert expert,Long TextId);
 }
