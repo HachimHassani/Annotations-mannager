@@ -16,10 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*")
+
 @RestController
 @RequestMapping("/admin")
-
 //@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
     private final TextRepository textRepository;
@@ -84,7 +83,6 @@ public class AdminController {
     }
 
     // Endpoint to delete a text by ID
-    @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/texts/{id}")
     public ResponseEntity<Void> deleteText(@PathVariable Long id) {
         textRepository.deleteById(id);
