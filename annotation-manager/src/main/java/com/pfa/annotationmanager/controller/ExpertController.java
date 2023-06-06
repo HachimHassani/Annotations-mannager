@@ -5,7 +5,6 @@ import com.pfa.annotationmanager.repository.ExpertCandidateRepository;
 import com.pfa.annotationmanager.repository.ExpertRepository;
 import com.pfa.annotationmanager.repository.TextRepository;
 import com.pfa.annotationmanager.service.ExpertService;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -15,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
+@CrossOrigin(origins = "http://localhost:3000")
+
 
 @RestController
 @RequestMapping("/expert")
