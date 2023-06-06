@@ -12,7 +12,7 @@ public class ExpertCandidate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ElementCollection @Setter @Getter
+    @OneToMany @Setter @Getter
     private List<AnnotationCandidate> annotationCandidates;
     @ManyToOne
     private Text text;

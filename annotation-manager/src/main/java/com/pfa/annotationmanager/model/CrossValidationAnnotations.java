@@ -17,5 +17,9 @@ public class CrossValidationAnnotations implements Serializable {
 
     private List<ScientifcClass> scientifcClass;
 
+    public void addScientificClass(ScientifcClass scientifcClass){
+        this.scientifcClass.add(scientifcClass);
+    }
+
 
 }
