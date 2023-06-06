@@ -1,13 +1,12 @@
 package com.pfa.annotationmanager.service;
 
 import com.pfa.annotationmanager.model.*;
-import com.pfa.annotationmanager.repository.ExpertCandidateRepository;
-import com.pfa.annotationmanager.repository.ExpertRepository;
-import com.pfa.annotationmanager.repository.TextRepository;
+import com.pfa.annotationmanager.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ExpertService {
@@ -16,9 +15,26 @@ public class ExpertService {
 
     @Autowired
     private  ExpertCandidateRepository expertCandidateRepository;
+    @Autowired
+    private AnnotationRepository annotationRepository;
 
     @Autowired
     private TextRepository textRepository;
+
+    @Autowired
+    private  AnnotationCandidateRepository annotationCandidateRepository;
+
+    @Autowired
+    private ElementIdChoicesRepository elementIdChoicesRepository;
+
+    @Autowired
+    private ElementIdRepository elementIdRepository;
+
+    @Autowired
+    private ElementIdCandidateRepository elementIdCandidateRepository;
+
+    @Autowired
+    private IdentificationService identificationService;
 
     @Autowired
     public ExpertService(ExpertRepository expertRepository) {
@@ -28,7 +44,7 @@ public class ExpertService {
     public Boolean setCandidate(Expert expert, Long id){
         //get text and create a new candidate
         Text text = textRepository.findById(id).orElse(null);
-        if (text==null){return false;}
+        if (text==null||text.getState()!=TextState.INIT){return false;}
         if (expertCandidateRepository.findByExpertAndTextId(expert,id).isPresent()){return false;}
         ExpertCandidate candidate = new ExpertCandidate();
         candidate.setText(text);
@@ -37,6 +53,11 @@ public class ExpertService {
         expertCandidateRepository.save(candidate);
         return  true;
 
+    }
+    public static <T> LinkedHashMap<T, Integer> sortMapByValue(Map<T, Integer> frequencyMap) {
+        return frequencyMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
     }
     public static <T> Map<T, Integer> calculateFrequency(List<T> elements) {
         Map<T, Integer> frequencyMap = new HashMap<>();
@@ -54,6 +75,11 @@ public class ExpertService {
     public List<Text> getAllTextsForExpert(Expert expert){
         List<Text> res = textRepository.findAll();
         return res;
+    }
+
+    public  Optional<List<AnnotationCandidate>> getAnnotationCandidates(Long id){
+        return annotationCandidateRepository.findAllByExpertCandidateId(id);
+
     }
 
     public void review(Long id) {
@@ -91,33 +117,66 @@ public class ExpertService {
     public List<Annotation> crossValidation(Long textId){
         Text text = textRepository.findById(textId).orElse(null);
         List<Integer> froms = new ArrayList<>();
-        List<Integer> tos = new ArrayList<>();
-        List<Long> classes = new ArrayList<>();
+        List<CrossValidationAnnotations> cross = new ArrayList<>();
         assert text != null;
         List<ExpertCandidate> candidates = text.getCandidates();
         int count =  candidates.size();
-
-            List<AnnotationCandidate> global = new ArrayList<>();
             for (ExpertCandidate expertCandidate : candidates) {
 
                 for (AnnotationCandidate annotationCandidate : expertCandidate.getAnnotationCandidates()) {
+                    Optional<CrossValidationAnnotations> test = cross.stream().filter(element -> ((element.getFrom() <= annotationCandidate.getFrom() && element.getTo()>annotationCandidate.getTo())||
+                            (annotationCandidate.getTo()>= element.getFrom() && element.getFrom() >= annotationCandidate.getFrom()))).findFirst();
                     // Check specific conditions to determine if the annotation is missing
-                    if (froms.stream().anyMatch(element -> element <= annotationCandidate.getFrom())) {
-                        global.add(annotationCandidate);
+                    if (test.isPresent()) {
+                        test.get().addScientificClass(annotationCandidate.getScientifcClass());
+                    }else{
+                        CrossValidationAnnotations newAnnotation = new CrossValidationAnnotations(annotationCandidate.getFrom(),annotationCandidate.getTo(), Collections.singletonList(annotationCandidate.getScientifcClass()));
+                        cross.add(newAnnotation);
                     }
                 }
 
 
             }
-            return  null;
+            for (CrossValidationAnnotations item:cross){
+                Map<ScientifcClass, Integer> t = calculateFrequency(item.getScientifcClass());
+                LinkedHashMap<ScientifcClass, Integer> sortedMap = sortMapByValue(t);
+                int i = sortedMap.size();
+                if (i>= count/2){
+                    ScientifcClass key = sortedMap.keySet().stream().findFirst().orElse(null);
+                    Annotation annotation = new Annotation();
+                    annotation.setFrom(item.getFrom());
+                    annotation.setTo(item.getTo());
+                    annotation.setScientifcClass(key);
+                    annotation.setText(text);
+                    annotationRepository.save(annotation);
+                }
+            }
 
+            return  null;
+    }
+
+    public boolean setIds(){
+        if (elementIdRepository.count() <= 3){
+            return false;
+        }else {
+            List<Annotation> annotations = annotationRepository.findAll();
+            List<ElementIdChoices> choices = new ArrayList<>();
+            for (Annotation annotation:annotations){
+                ElementIdChoices elementIdChoices = new ElementIdChoices();
+                elementIdChoices.setAnnotation(annotation);
+               choices.add(elementIdChoices);
+            }
+            elementIdChoicesRepository.saveAll(choices);
+            identificationService.pickRandomElements();
+            return true;
+        }
     }
 
     public void createAnnotations(Expert expert, Long id, List<AnnotationCandidate> annotations){
         //asssumes that the id is for the expertcandidate
         ExpertCandidate cand=expertCandidateRepository.findById(id).orElse(null);
         //checks the state
-        if((cand!=null)&&(cand.getAnnotationstate()==TextState.INIT)) {
+        if((cand!=null)) {
             cand.setAnnotationCandidates(annotations);
             cand.setAnnotationstate(TextState.REVIEW);
         }

@@ -65,12 +65,11 @@ public class ExpertController {
         return expertOptional.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-//    @GetMapping("/candidates/{id}/annotations")
-//    public ResponseEntity<List<AnnotationCandidate>> getCandidateAnnotationsbyid(@PathVariable Long id) {
-//        Optional<List<AnnotationCandidate>> annotationCandidates = annotationCandidateRepository.findAllByExpertCandidateId(id);
-//        return annotationCandidates.map(ResponseEntity::ok)
-//                .orElse(ResponseEntity.notFound().build());
-//    }
+    @GetMapping("/candidates/{id}/annotations")
+    public ResponseEntity<List<AnnotationCandidate>> getCandidateAnnotationsbyid(@PathVariable Long id) {
+        return expertService.getAnnotationCandidates(id).map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 
 
     @PostMapping("/cadidates/{id}/annotate")

@@ -6,17 +6,28 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
 @Entity
 @Table(name = "annotation")
+
 public class Annotation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String content;
+    private Integer from;
 
+    private  Integer to;
 
+    @ManyToOne
+    private ElementId elementId;
+
+    @ManyToOne
+    private ScientifcClass scientifcClass;
     @ManyToOne
     private Text text;
 
@@ -25,11 +36,7 @@ public class Annotation {
     public Annotation() {
     }
 
-    public Annotation(String content, Text text) {
-        this.content = content;
 
-        this.text = text;
-    }
 
     // Getter and Setter methods
 
@@ -37,13 +44,7 @@ public class Annotation {
         return id;
     }
 
-    public String getContent() {
-        return content;
-    }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
 
 
     public Text getText() {
