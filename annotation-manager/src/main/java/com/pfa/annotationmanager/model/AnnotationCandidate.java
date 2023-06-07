@@ -13,12 +13,14 @@ public class AnnotationCandidate  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Integer wordFrom;
-    private  Integer wordTo;
+    @Column(name = "wordFrom")
+    private Integer start;
+    @Column(name = "wordTo")
+    private  Integer end;
 
     @ManyToOne
     private ScientifcClass scientifcClass;
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private ExpertCandidate expertCandidate;
 
 
@@ -26,6 +28,9 @@ public class AnnotationCandidate  {
 
     }
 
+    public void setTag(String text){
+
+    }
 
     public void setId(Long id) {
         this.id = id;

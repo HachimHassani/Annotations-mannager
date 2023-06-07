@@ -19,6 +19,8 @@ public class ExpertService {
     private AnnotationRepository annotationRepository;
 
     @Autowired
+    private ScientificClassRepository scientificClassRepository;
+    @Autowired
     private TextRepository textRepository;
 
     @Autowired
@@ -44,7 +46,7 @@ public class ExpertService {
     public Boolean setCandidate(Expert expert, Long id){
         //get text and create a new candidate
         Text text = textRepository.findById(id).orElse(null);
-        if (text==null||text.getState()!=TextState.INIT){return false;}
+        if (text==null||(text.getState()!=null&&text.getState()!=TextState.INIT)){return false;}
         if (expertCandidateRepository.findByExpertAndTextId(expert,id).isPresent()){return false;}
         ExpertCandidate candidate = new ExpertCandidate();
         candidate.setText(text);
@@ -92,7 +94,7 @@ public class ExpertService {
 
                 for (AnnotationCandidate annotationCandidate : expertCandidate.getAnnotationCandidates()) {
                     // Check specific conditions to determine if the annotation is missing
-                    if (global.stream().noneMatch(element -> Objects.equals(element.getWordFrom(), annotationCandidate.getWordFrom()) && Objects.equals(element.getWordTo(), annotationCandidate.getWordTo()))) {
+                    if (global.stream().noneMatch(element -> Objects.equals(element.getStart(), annotationCandidate.getStart()) && Objects.equals(element.getEnd(), annotationCandidate.getEnd()))) {
                         global.add(annotationCandidate);
                     }
                 }
@@ -109,12 +111,12 @@ public class ExpertService {
 
         if (cand != null) {
             List<AnnotationCandidate> existing = cand.getAnnotationCandidates();
-            candidates.removeIf(ann -> existing.stream().noneMatch(element -> Objects.equals(element.getWordFrom(), ann.getWordFrom()) && Objects.equals(element.getWordTo(), ann.getWordTo())));
+            candidates.removeIf(ann -> existing.stream().noneMatch(element -> Objects.equals(element.getStart(), ann.getStart()) && Objects.equals(element.getEnd(), ann.getEnd())));
         }
         return candidates;
     }
 
-    public List<Annotation> crossValidation(Long textId){
+    public void crossValidation(Long textId){
         Text text = textRepository.findById(textId).orElse(null);
         List<Integer> froms = new ArrayList<>();
         List<CrossValidationAnnotations> cross = new ArrayList<>();
@@ -124,13 +126,13 @@ public class ExpertService {
             for (ExpertCandidate expertCandidate : candidates) {
 
                 for (AnnotationCandidate annotationCandidate : expertCandidate.getAnnotationCandidates()) {
-                    Optional<CrossValidationAnnotations> test = cross.stream().filter(element -> ((element.getWordFrom() <= annotationCandidate.getWordFrom() && element.getWordTo()>annotationCandidate.getWordTo())||
-                            (annotationCandidate.getWordTo()>= element.getWordFrom() && element.getWordFrom() >= annotationCandidate.getWordFrom()))).findFirst();
+                    Optional<CrossValidationAnnotations> test = cross.stream().filter(element -> ((element.getFrom() <= annotationCandidate.getStart() && element.getTo()>annotationCandidate.getEnd())||
+                            (annotationCandidate.getEnd()>= element.getFrom() && element.getFrom() >= annotationCandidate.getStart()))).findFirst();
                     // Check specific conditions to determine if the annotation is missing
                     if (test.isPresent()) {
                         test.get().addScientificClass(annotationCandidate.getScientifcClass());
                     }else{
-                        CrossValidationAnnotations newAnnotation = new CrossValidationAnnotations(annotationCandidate.getWordFrom(),annotationCandidate.getWordTo(), Collections.singletonList(annotationCandidate.getScientifcClass()));
+                        CrossValidationAnnotations newAnnotation = new CrossValidationAnnotations(annotationCandidate.getStart(),annotationCandidate.getEnd(), Collections.singletonList(annotationCandidate.getScientifcClass()));
                         cross.add(newAnnotation);
                     }
                 }
@@ -144,15 +146,15 @@ public class ExpertService {
                 if (i>= count/2){
                     ScientifcClass key = sortedMap.keySet().stream().findFirst().orElse(null);
                     Annotation annotation = new Annotation();
-                    annotation.setWordFrom(item.getWordFrom());
-                    annotation.setWordTo(item.getWordTo());
+                    annotation.setFrom(item.getFrom());
+                    annotation.setTo(item.getTo());
                     annotation.setScientifcClass(key);
                     annotation.setText(text);
                     annotationRepository.save(annotation);
                 }
             }
 
-            return  null;
+            return;
     }
 
     public boolean setIds(){
@@ -172,13 +174,29 @@ public class ExpertService {
         }
     }
 
-    public void createAnnotations(Expert expert, Long id, List<AnnotationCandidate> annotations){
+    public List<ScientifcClass> getallClasses(){
+        return scientificClassRepository.findAll();
+    }
+
+    public void createAnnotations(Expert expert, Long id, List<Map<String,Object>> request){
         //asssumes that the id is for the expertcandidate
         ExpertCandidate cand=expertCandidateRepository.findById(id).orElse(null);
         //checks the state
-        if((cand!=null)) {
+        List<AnnotationCandidate> annotations = new ArrayList<>();
+        if((cand!=null&&cand.getAnnotationstate()!=TextState.ANNOTATED)) {
+           for (Map<String,Object> annotation: request){
+               AnnotationCandidate annot = new AnnotationCandidate();
+               annot.setExpertCandidate(cand);
+               annot.setScientifcClass(scientificClassRepository.findByName((String) annotation.get("tag")).orElse(null));
+               annot.setStart((int) annotation.get("start"));
+               annot.setEnd((int) annotation.get("end"));
+               annotations.add(annot);
+           }
+
+            annotationCandidateRepository.saveAll(annotations);
             cand.setAnnotationCandidates(annotations);
             cand.setAnnotationstate(TextState.REVIEW);
+            expertCandidateRepository.save(cand);
         }
     }
     public void updateAnnotations(Expert expert,Long id, List<AnnotationCandidate> annotations){
@@ -219,5 +237,21 @@ public class ExpertService {
 
     public void deleteExpert(Long id) {
         expertRepository.deleteById(id);
+    }
+
+    public  void confirmAnnotations(Expert expert,Long id) {
+        //asssumes that the id is for the expertcandidate
+        ExpertCandidate cand=expertCandidateRepository.findById(id).orElse(null);
+
+        assert cand != null;
+        cand.setAnnotationstate(TextState.ANNOTATED);
+        List<ExpertCandidate> cands = cand.getText().getCandidates();
+        for (ExpertCandidate candidate:cands){
+            if (candidate.getAnnotationstate()!=null&&candidate.getAnnotationstate()!=TextState.REVIEW)
+            {
+                return;
+            }
+        }
+        crossValidation(id);
     }
 }

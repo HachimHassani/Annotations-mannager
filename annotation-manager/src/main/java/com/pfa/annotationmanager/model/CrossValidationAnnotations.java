@@ -11,8 +11,10 @@ import java.util.List;
 
 public class CrossValidationAnnotations implements Serializable {
 
-    private Integer wordFrom;
-    private  Integer wordTo;
+
+    private Integer from;
+
+    private  Integer to;
 
     private List<ScientifcClass> scientifcClass;
 

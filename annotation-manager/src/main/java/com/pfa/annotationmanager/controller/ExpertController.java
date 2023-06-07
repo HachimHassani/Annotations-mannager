@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -71,10 +72,14 @@ public class ExpertController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/classes")
+    public List<ScientifcClass> getAllClasses(){
+        return expertService.getallClasses();
+    }
 
-    @PostMapping("/cadidates/{id}/annotate")
-    public ResponseEntity<Expert> createAnnotations(Authentication authentication,@PathVariable Long id,
-                                                    @RequestBody List<AnnotationCandidate> annotations) {
+    @PostMapping("/candidates/{id}/annotate")
+    public ResponseEntity<Void> createAnnotations(Authentication authentication,@PathVariable Long id,
+                                                    @RequestBody List<Map<String,Object>> annotations) {
         //get the expert
         String username = authentication.getName();
         Expert expert =  expertRepository.findByEmail(username).orElse(null);
@@ -84,7 +89,20 @@ public class ExpertController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/cadidates/{id}/annotate")
+    @PostMapping("/candidates/{id}/confirm")
+    public ResponseEntity<Void> confirmAnnotations(Authentication authentication,@PathVariable Long id
+                                                  ) {
+        //get the expert
+        String username = authentication.getName();
+        Expert expert =  expertRepository.findByEmail(username).orElse(null);
+
+        expertService.confirmAnnotations(expert,id );
+
+        return ResponseEntity.ok().build();
+    }
+
+
+    @PutMapping("/candidate/{id}/annotate")
     public ResponseEntity<Expert> updateAnnotations(Authentication authentication,@PathVariable Long id,
                                                     @RequestBody List<AnnotationCandidate> annotations) {
         //get the expert

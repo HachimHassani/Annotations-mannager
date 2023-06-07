@@ -11,9 +11,11 @@ public class Annotation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer wordFrom;
+    @Column(name = "wordFrom")
+    private Integer from;
 
-    private  Integer wordTo;
+    @Column(name = "wordTo")
+    private  Integer to;
 
     @ManyToOne
     private ElementId elementId;
