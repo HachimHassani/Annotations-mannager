@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/admin")
 
@@ -59,7 +59,7 @@ public class AdminController {
     }
 
     @GetMapping("/texts")
-    public ResponseEntity<List<Text>> getText(@RequestBody Text text) {
+    public ResponseEntity<List<Text>> getText() {
         List<Text> savedText = textRepository.findAll();
         return new ResponseEntity<>(savedText, HttpStatus.CREATED);
     }
