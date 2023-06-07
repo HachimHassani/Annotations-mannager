@@ -8,16 +8,19 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @Entity
+//@Table(name = "annotation_candidate")
 public class AnnotationCandidate  {
-
-    private Integer from;
-    private  Integer to;
-
-    @ManyToOne
-    private ScientifcClass scientifcClass;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Integer wordFrom;
+    private  Integer wordTo;
+
+    @ManyToOne
+    private ScientifcClass scientifcClass;
+    @ManyToOne
+    private ExpertCandidate expertCandidate;
+
 
     public AnnotationCandidate() {
 

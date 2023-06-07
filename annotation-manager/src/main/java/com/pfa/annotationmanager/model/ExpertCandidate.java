@@ -8,6 +8,7 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
+//@Table(name = "Expert_Candidate")
 public class ExpertCandidate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
