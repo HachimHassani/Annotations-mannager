@@ -1,6 +1,5 @@
 package com.pfa.annotationmanager.model;
 
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -12,8 +11,8 @@ import java.util.List;
 
 public class CrossValidationAnnotations implements Serializable {
 
-    private Integer from;
-    private  Integer to;
+    private Integer wordFrom;
+    private  Integer wordTo;
 
     private List<ScientifcClass> scientifcClass;
 

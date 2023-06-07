@@ -92,7 +92,7 @@ public class ExpertService {
 
                 for (AnnotationCandidate annotationCandidate : expertCandidate.getAnnotationCandidates()) {
                     // Check specific conditions to determine if the annotation is missing
-                    if (global.stream().noneMatch(element -> Objects.equals(element.getFrom(), annotationCandidate.getFrom()) && Objects.equals(element.getTo(), annotationCandidate.getTo()))) {
+                    if (global.stream().noneMatch(element -> Objects.equals(element.getWordFrom(), annotationCandidate.getWordFrom()) && Objects.equals(element.getWordTo(), annotationCandidate.getWordTo()))) {
                         global.add(annotationCandidate);
                     }
                 }
@@ -109,7 +109,7 @@ public class ExpertService {
 
         if (cand != null) {
             List<AnnotationCandidate> existing = cand.getAnnotationCandidates();
-            candidates.removeIf(ann -> existing.stream().noneMatch(element -> Objects.equals(element.getFrom(), ann.getFrom()) && Objects.equals(element.getTo(), ann.getTo())));
+            candidates.removeIf(ann -> existing.stream().noneMatch(element -> Objects.equals(element.getWordFrom(), ann.getWordFrom()) && Objects.equals(element.getWordTo(), ann.getWordTo())));
         }
         return candidates;
     }
@@ -124,13 +124,13 @@ public class ExpertService {
             for (ExpertCandidate expertCandidate : candidates) {
 
                 for (AnnotationCandidate annotationCandidate : expertCandidate.getAnnotationCandidates()) {
-                    Optional<CrossValidationAnnotations> test = cross.stream().filter(element -> ((element.getFrom() <= annotationCandidate.getFrom() && element.getTo()>annotationCandidate.getTo())||
-                            (annotationCandidate.getTo()>= element.getFrom() && element.getFrom() >= annotationCandidate.getFrom()))).findFirst();
+                    Optional<CrossValidationAnnotations> test = cross.stream().filter(element -> ((element.getWordFrom() <= annotationCandidate.getWordFrom() && element.getWordTo()>annotationCandidate.getWordTo())||
+                            (annotationCandidate.getWordTo()>= element.getWordFrom() && element.getWordFrom() >= annotationCandidate.getWordFrom()))).findFirst();
                     // Check specific conditions to determine if the annotation is missing
                     if (test.isPresent()) {
                         test.get().addScientificClass(annotationCandidate.getScientifcClass());
                     }else{
-                        CrossValidationAnnotations newAnnotation = new CrossValidationAnnotations(annotationCandidate.getFrom(),annotationCandidate.getTo(), Collections.singletonList(annotationCandidate.getScientifcClass()));
+                        CrossValidationAnnotations newAnnotation = new CrossValidationAnnotations(annotationCandidate.getWordFrom(),annotationCandidate.getWordTo(), Collections.singletonList(annotationCandidate.getScientifcClass()));
                         cross.add(newAnnotation);
                     }
                 }
@@ -144,8 +144,8 @@ public class ExpertService {
                 if (i>= count/2){
                     ScientifcClass key = sortedMap.keySet().stream().findFirst().orElse(null);
                     Annotation annotation = new Annotation();
-                    annotation.setFrom(item.getFrom());
-                    annotation.setTo(item.getTo());
+                    annotation.setWordFrom(item.getWordFrom());
+                    annotation.setWordTo(item.getWordTo());
                     annotation.setScientifcClass(key);
                     annotation.setText(text);
                     annotationRepository.save(annotation);

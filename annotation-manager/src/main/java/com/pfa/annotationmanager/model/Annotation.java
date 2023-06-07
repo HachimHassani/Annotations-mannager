@@ -1,27 +1,19 @@
 package com.pfa.annotationmanager.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@Table(name = "annotation")
-
+//@Table(name = "annotation")
 public class Annotation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer from;
+    private Integer wordFrom;
 
-    private  Integer to;
+    private  Integer wordTo;
 
     @ManyToOne
     private ElementId elementId;
