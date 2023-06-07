@@ -31,4 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
-/frontend-annotation/node_modules/
+frontend-annotation/node_modules/
