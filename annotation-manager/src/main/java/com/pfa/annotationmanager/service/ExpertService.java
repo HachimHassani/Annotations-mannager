@@ -116,7 +116,7 @@ public class ExpertService {
         return candidates;
     }
 
-    public List<Annotation> crossValidation(Long textId){
+    public void crossValidation(Long textId){
         Text text = textRepository.findById(textId).orElse(null);
         List<Integer> froms = new ArrayList<>();
         List<CrossValidationAnnotations> cross = new ArrayList<>();
@@ -154,7 +154,7 @@ public class ExpertService {
                 }
             }
 
-            return  null;
+            return;
     }
 
     public boolean setIds(){
@@ -245,5 +245,13 @@ public class ExpertService {
 
         assert cand != null;
         cand.setAnnotationstate(TextState.ANNOTATED);
+        List<ExpertCandidate> cands = cand.getText().getCandidates();
+        for (ExpertCandidate candidate:cands){
+            if (candidate.getAnnotationstate()!=null&&candidate.getAnnotationstate()!=TextState.REVIEW)
+            {
+                return;
+            }
+        }
+        crossValidation(id);
     }
 }
