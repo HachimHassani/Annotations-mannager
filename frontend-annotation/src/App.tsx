@@ -8,23 +8,28 @@ import Navbar from "./Components/Home";
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import Annot from "./Components/textarea";
 import Classes from "./Components/classes";
-import Example from "./Components/admin_sess";
-import Navbar2 from "./Components/navbar";
-import Sidebar from "./Components/sidebar";
+import AdminSession from "./Components/admin_sess";
+import ExpertSession from "./Components/expert_sess";
+import CandidateSession from "./Components/annotate_sess";
 function App() {
   return (
-
+    
     <>
          <BrowserRouter>
          <Switch>
-           <PrivateRoute exact path="/" component={Example}/>
+          <PrivateRoute exact path="/" component={ExpertSession}/>
            <PrivateRoute exact path="/classes" component={Classes}/>
+           <PrivateRoute exact path="/AdminSession" component={AdminSession}/>
+           {/* <PrivateRoute exact path="/ExpertSession" component={Classes}/> */}
+           <PrivateRoute exact path="/CandidateSession" component={CandidateSession}/>
+           <PrivateRoute exact path="/annot" component={Annot}/>
            <RestrictedRoute exact path="/login" component={Login} />
            <Route exact path="/register" component={SignUp} />
            </Switch>
        </BrowserRouter>
       </>
-  );
+
+);
 }
 
 export default App;

@@ -17,13 +17,11 @@ import {
 } from '@heroicons/react/outline'
 
 const navigation = [
-  { name: 'Texte En cours', href: '/', icon: DocumentIcon, current: true },
+  { name: 'All Texts', href: '/', icon: DocumentIcon, current: true },
+  { name: 'Candidate texts', href: '/CandidateSession', icon: CalendarIcon, current: false },
+  { name: 'Annotations', href: '/annot', icon: InboxIcon, current: false },
   { name: 'Classes', href: '/classes', icon: ChartPieIcon , current: false },
-  { name: 'Identificateurs', href: '#', icon: IdentificationIcon, current: false },
-  { name: 'Calendar', href: '#', icon: CalendarIcon, current: false },
-  { name: 'Documents', href: '#', icon: InboxIcon, current: false },
-  { name: 'Reports', href: '#', icon: ChartBarIcon, current: false },
-]
+  { name: 'Identificateurs', href: '#', icon: IdentificationIcon, current: false },]
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -124,12 +122,11 @@ export default function Sidebar() {
                       <div>
                         <img
                           className="inline-block h-10 w-10 rounded-full"
-                          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                          alt=""
+src ="https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?w=740&t=st=1686179769~exp=1686180369~hmac=9f17d6b29baaaac99a98ab41a13301c5d3f3e8f31ee9c8dbf322fbf619db192b"                          alt=""
                         />
                       </div>
                       <div className="ml-3">
-                        <p className="text-base font-medium text-gray-700 group-hover:text-gray-900">Tom Cook</p>
+                        <p className="text-base font-medium text-gray-700 group-hover:text-gray-900"></p>
                         <p className="text-sm font-medium text-gray-500 group-hover:text-gray-700">View profile</p>
                       </div>
                     </div>
@@ -148,9 +145,7 @@ export default function Sidebar() {
             <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
               <div className="flex items-center flex-shrink-0 px-4">
                 <img
-                  className="h-8 w-auto"
-                  src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
-                  alt="Text Annotation"
+src ="/Annotations.png"       style= {{marginTop:-20}}           alt="Text Annotation"
                 />
               </div>
               <nav className="mt-5 flex-1 px-2 bg-white space-y-1">
@@ -181,12 +176,11 @@ export default function Sidebar() {
                   <div>
                     <img
                       className="inline-block h-9 w-9 rounded-full"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      alt=""
+src = "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?w=740&t=st=1686179769~exp=1686180369~hmac=9f17d6b29baaaac99a98ab41a13301c5d3f3e8f31ee9c8dbf322fbf619db192b"                      alt=""
                     />
                   </div>
                   <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">Tom Cook</p>
+                    <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">Sadik Mohamed</p>
                     <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">View profile</p>
                   </div>
                 </div>

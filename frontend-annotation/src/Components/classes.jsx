@@ -1,7 +1,8 @@
 
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState,useEffect } from 'react'
 import Navbar from "./Home";
 import Sidebar from './sidebar'
+import axios from "axios";
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
@@ -39,141 +40,54 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-// function Test({ sendDataToParent }){
-
-  
-//   const [color,setColor]= useState(   { r: '0',
-//   g: '0',
-//   b: '0',
-//   a: '1'}) 
-
-// const rgb = 'rgb('+color.r+','+color.g+','+color.b+')'
-// const divstyle = {
-//   'background-color':rgb 
-// }
-// console.log("this is the rgb ",rgb);
-//   const handleCallback =  (childData) => {
-//        setColor({r:childData.r,
-//         g:childData.g,
-//         b:childData.b,
-//         a:childData.a,})
-//   }
-
-//   const onIndex = (people)=>{ }
-  
-//   const [open, setOpen] = React.useState(false);
-//   const handleOpen = () => setOpen(true);
-//   const handleClose = () => {setOpen(false);
-//     const divstyle = {
-//       'background-color':rgb 
-//     }
-//     sendDataToParent(divstyle)};
-//   const style = {
-//       position: 'absolute',
-//       top: '50%',
-//       left: '50%',
-//       transform: 'translate(-50%, -50%)',
-//       width: 400,
-//       bgcolor: 'background.paper',
-//       border: '2px solid #000',
-//       boxShadow: 24,
-//       p: 4,
-//     };
-
-
-//   return(    
-//     <><button onClick={handleOpen} href="#" className="text-indigo-600 hover:text-indigo-900">
-//       Edit
-//     </button><Modal
-//       open={open}
-//       onClose={handleClose}
-//       aria-labelledby="modal-modal-color"
-//       aria-describedby="modal-modal-description"
-//     >
-//         <Box sx={style}>
-//           <div className="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
-//             <div>
-//               <h3 className="text-lg leading-6 font-medium text-gray-900">Personal Information</h3>
-//               <p className="mt-1 max-w-2xl text-sm text-gray-500">Use a permanent address where you can receive mail.</p>
-//             </div>
-//             <div className="space-y-6 sm:space-y-5">
-//               <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-//                 <label htmlFor="first-name" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-//                   Name
-//                 </label>
-//                 <div className="mt-1 sm:mt-0 sm:col-span-2">
-//                   <input
-//                     type="text"
-//                     name="first-name"
-//                     id="first-name"
-//                     autoComplete="given-name"
-//                     className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md" />
-//                 </div>
-//               </div>
-
-//               <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-//                 <label htmlFor="last-name" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-//                   Color
-//                 </label>
-//                 <div className="mt-1 sm:mt-0 sm:col-span-2">
-//                   <SketchExample sendDataToParent={handleCallback}></SketchExample>
-//                 </div>
-//               </div>
-
-//               <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-//                 <label htmlFor="last-name" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-//                   Shortkey
-//                 </label>
-//                 <div className="mt-1 sm:mt-0 sm:col-span-2">
-//                   <input
-//                     type="text"
-//                     name="last-name"
-//                     id="last-name"
-//                     autoComplete="family-name"
-//                     className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md" />
-//                 </div>
-//               </div>
-
-//               <div className="pt-5">
-//                 <div className="flex justify-end">
-//                   <button
-//                     type="button"
-//                     className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-//                   >
-//                     Cancel
-//                   </button>
-//                   <button
-//                     type="submit"
-//                     className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-//                   >
-//                     Save
-//                   </button>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </Box>
-//       </Modal></>)
-// }
-
+function rgbToHex(r, g, b) {
+  return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
+}
 
 export default function Classes() {
 
   const [divs,setDivs] = useState('')
-  //console.log(divs);
+  const [classe,setClasse] = useState()
+  const [addclasse,setAddclasse] = useState({name:'',shortkey:'',color:''})
+
+  const handleInput = (event) => {
+    setAddclasse({...addclasse,[event.target.name]:event.target.value})
+
+}
+console.log("this is data",addclasse)
+const getHeaders = () => {
+  const token = localStorage.getItem("auth");
+  return {headers :{    Authorization: `Bearer ${token}`}}
+
+}
+const header = getHeaders()
+useEffect(() => {
+  fetch("http://localhost:8080/ScientificClass",header)
+  .then(response => response.json())
+  // 4. Setting *data* to the API DATA that we received from the response above
+  .then(data => setClasse(data))
+  },[])
+  function handleClasses(event){
+    const header = getHeaders();
+    event.preventDefault()
+    
+    axios.post('http://localhost:8080/ScientificClass',{color:hex,shortkey:addclasse.shortkey,name:addclasse.name
+  
+    },header).then(response => console.log(response)).catch(err => console.log(err.status))
+  }
+  console.log(classe)
   const handleTest = (color) => { setDivs(color)}
     const [color,setColor]= useState(   { r: '241',
     g: '112',
     b: '19',
     a: '1'}) 
     const [index,setIndex] = useState(-1)
-
+  let hex = rgbToHex(color.r,color.g,color.b)
   const rgb = 'rgb('+color.r+','+color.g+','+color.b+')'
-  console.log(rgb)
   const divstyle = {
     'background-color':rgb 
   }
- console.log(index);
+ console.log(hex);
     const handleCallback =  (childData) => {
          setColor({r:childData.r,
           g:childData.g,
@@ -182,9 +96,10 @@ export default function Classes() {
     }
     
     const [open, setOpen] = React.useState(false);
-    const handleColor = (person,rgb) =>{ setIndex(person.id);person.color=rgb;console.log("this is the id "+person.id+" and this is the color "+person.color)}
+    const handleColor = (person,rgb) =>{ setIndex(person.id);person.color=hex;console.log("this is the id "+person.id+" and this is the color "+person.color)}
     const  handleOpen = () => {setOpen(true)}
     const handleClose = () => setOpen(false);
+    
     const style = {
         position: 'absolute',
         top: '50%',
@@ -229,6 +144,7 @@ export default function Classes() {
         </div>
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
           <button
+          onClick={handleOpen}
             type="button"
             className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
           >
@@ -278,7 +194,7 @@ export default function Classes() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {people.map((person) => (
+                  {classe?.map((person) => (
                     <tr key={person.id}  className={selectedPeople.includes(person) ? 'bg-gray-50' : undefined}>
                       <td className="relative w-12 px-6 sm:w-16 sm:px-8">
                         {selectedPeople.includes(person) && (
@@ -287,7 +203,7 @@ export default function Classes() {
                         <input
                           type="checkbox"
                           className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 sm:left-6"
-                          value={person.Shortkey}
+                          value={person.shortkey}
                           checked={selectedPeople.includes(person)}
                           onChange={(e) =>
                             setSelectedPeople(
@@ -323,8 +239,8 @@ export default function Classes() {
                             <Box sx={style}>
                             <div className="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
           <div>
-            <h3 className="text-lg leading-6 font-medium text-gray-900">Personal Information</h3>
-            <p className="mt-1 max-w-2xl text-sm text-gray-500">Use a permanent address where you can receive mail.</p>
+            <h3 className="text-lg leading-6 font-medium text-gray-900">Edit this classe</h3>
+            <p className="mt-1 max-w-2xl text-sm text-gray-500">you can edit the name,the shortkey and the color of the class</p>
           </div>
           <div className="space-y-6 sm:space-y-5">
             <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
@@ -333,9 +249,11 @@ export default function Classes() {
               </label>
               <div className="mt-1 sm:mt-0 sm:col-span-2">
                 <input
+                  onChange={handleInput}
+
                   type="text"
-                  name="first-name"
-                  id="first-name"
+                  name="name"
+                  id="name"
                   autoComplete="given-name"
                   className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                 />
@@ -357,9 +275,11 @@ export default function Classes() {
               </label>
               <div className="mt-1 sm:mt-0 sm:col-span-2">
                 <input
+                                            onChange={handleInput}
+
                   type="text"
-                  name="last-name"
-                  id="last-name"
+                  name="shortkey"
+                  id="shortkey"
                   autoComplete="family-name"
                   className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                 />
@@ -375,7 +295,8 @@ export default function Classes() {
             Cancel
           </button>
           <button
-            type="submit"
+                      onClick={handleClasses}
+                      type="submit"
             className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             Save

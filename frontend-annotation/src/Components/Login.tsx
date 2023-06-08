@@ -2,8 +2,8 @@ import React, { FC } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+// import "bootstrap/dist/css/bootstrap.min.css";
+// import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { ToastContainer, toast, Flip } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import { RouteComponentProps } from "react-router";
@@ -70,7 +70,7 @@ const Login: FC<SomeComponentProps> = ({ history }): JSX.Element => {
             <div className="col-md-12">
               <div className="card-body">
                 <h3 className="card-title text-center text-secondary mt-3">
-                  Login Form
+                  Welcome to annotate manager
                 </h3>
                 <form autoComplete="off" onSubmit={handleSubmit(login)}>
                   <div className="mb-3 mt-4">
